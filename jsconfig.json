@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
+    "rootDir": "src"
   },
-  "include": ["src/**/*", "**.ts"],
+  "include": ["src/js/**/**.js", "src/js/**.js", "**.d.ts"],
   "exclude": ["node_modules", "webpack.config.js", "dist"]
 }

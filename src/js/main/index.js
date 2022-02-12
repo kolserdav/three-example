@@ -1,5 +1,7 @@
 // @ts-check
 import * as THREE from 'three';
+import '../../scss/styles.scss';
+
 import { animation } from './animation';
 
 // init

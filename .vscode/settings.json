@@ -1,6 +1,6 @@
 {
-  "git.ignoreLimitWarning": true,
-  "eslint.validate": ["javascript", "javascriptreact", "html", "typescriptreact"],
+  "git.ignoreWarnings": true,
+  "eslint.validate": ["javascript", "html"],
   "eslint.options": { "overrideConfigFile": ".eslintrc.json" },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
