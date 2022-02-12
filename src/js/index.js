@@ -1,5 +1,6 @@
 // @ts-check
 import * as THREE from 'three';
+import { animation } from './animation';
 
 // init
 
@@ -16,14 +17,12 @@ scene.add(mesh);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setAnimationLoop(animation);
+renderer.setAnimationLoop(
+  animation({
+    renderer,
+    scene,
+    camera,
+    mesh,
+  })
+);
 document.body.appendChild(renderer.domElement);
-
-// animation
-
-function animation(time) {
-  mesh.rotation.x = time / 1000;
-  mesh.rotation.y = time / 2000;
-
-  renderer.render(scene, camera);
-}

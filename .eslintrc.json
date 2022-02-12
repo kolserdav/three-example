@@ -11,7 +11,7 @@
     "sourceType": "module",
     "allowImportExportEverywhere": true
   },
-  "ignorePatterns": ["node_modules", "webpack.config.js"],
+  "ignorePatterns": ["node_modules", "webpack.config.js", "dist"],
   "rules": {
     "no-unused-vars": 1,
     "prettier/prettier": 1
