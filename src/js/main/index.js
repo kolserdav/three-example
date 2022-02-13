@@ -21,7 +21,11 @@ scene.add(mesh);
 scene.add(mesh2);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
+const windowResize = () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+};
+windowResize();
+window.addEventListener('resize', windowResize);
 document.body.appendChild(renderer.domElement);
 
 // Перемещение мыши
@@ -49,8 +53,8 @@ if (start) {
 }
 
 // Движение
-const X_SPEED = 0.05;
-const Z_SPEED = 0.05;
+const X_SPEED = 0.005;
+const Z_SPEED = 0.005;
 
 document.addEventListener('keydown', keyPress, true);
 document.addEventListener('keyup', keyPress, true);
@@ -64,7 +68,21 @@ function keyPress(e) {
   map[e.key] = e.type === 'keydown';
 }
 
+const keyW = () => {
+  return map['w'] || map['W'] || map['ц'] || map['Ц'];
+};
+const keyA = () => {
+  return map['a'] || map['A'] || map['ф'] || map['Ф'];
+};
+const keyS = () => {
+  return map['s'] || map['S'] || map['ы'] || map['Ы'];
+};
+const keyD = () => {
+  return map['d'] || map['D'] || map['в'] || map['В'];
+};
+
 /**
+ * Текущие нажатые клавиши
  * @type {{[key: string]: boolean;}}
  */
 const map = {};
@@ -72,29 +90,29 @@ const map = {};
  * Передвижение камеры при нажатии клавиш
  */
 function onDocumentKeyDown() {
-  if (map['w'] && !map['a'] && !map['d'] && !map['s']) {
+  if (keyW() && !keyA() && !keyD() && !keyS()) {
     // Только вперед
     controls.moveForward(Z_SPEED);
     //camera.position.z -= Z_SPEED;
-  } else if (map['a'] && !map['w'] && !map['s'] && !map['d']) {
+  } else if (keyA() && !keyW() && !keyS() && !keyD()) {
     // Только влево
     controls.moveRight(-1 * X_SPEED);
-  } else if (map['d'] && !map['w'] && !map['a'] && !map['s']) {
+  } else if (keyD() && !keyW() && !keyA() && !keyS()) {
     // Только вправо
     controls.moveRight(X_SPEED);
-  } else if (map['s'] && !map['d'] && !map['a'] && !map['w']) {
+  } else if (keyS() && !keyD() && !keyA() && !keyW()) {
     // Только назад
     controls.moveForward(-1 * Z_SPEED);
-  } else if (map['w'] && map['a'] && !map['d'] && !map['s']) {
+  } else if (keyW() && keyA() && !keyD() && !keyS()) {
     controls.moveForward(Z_SPEED);
     controls.moveRight(-1 * X_SPEED);
-  } else if (map['w'] && map['d'] && !map['a'] && !map['s']) {
+  } else if (keyW() && keyD() && !keyA() && !keyS()) {
     controls.moveForward(Z_SPEED);
     controls.moveRight(X_SPEED);
-  } else if (map['s'] && map['d'] && !map['a'] && !map['w']) {
+  } else if (keyS() && keyD() && !keyA() && !keyW()) {
     controls.moveForward(-1 * Z_SPEED);
     controls.moveRight(X_SPEED);
-  } else if (map['s'] && map['a'] && !map['d'] && !map['w']) {
+  } else if (keyS() && keyA() && !keyD() && !keyW()) {
     controls.moveForward(-1 * Z_SPEED);
     controls.moveRight(-1 * X_SPEED);
   }
