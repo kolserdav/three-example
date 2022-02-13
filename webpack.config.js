@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = (env) => {
-  const { NODE_ENV } = env;
+  const { NODE_ENV, PORT } = env;
   return {
     mode: NODE_ENV,
     entry: {
@@ -27,6 +27,14 @@ module.exports = (env) => {
     module: {
       rules: [
         {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+          },
+          exclude: /node_modules/,
+        },
+        {
           test: /\.(scss|css)$/i,
           use: ['style-loader', 'css-loader', 'sass-loader'],
         },
@@ -37,7 +45,7 @@ module.exports = (env) => {
         directory: path.join(__dirname, 'static'),
       },
       compress: true,
-      port: 9000,
+      port: PORT || 3000,
     },
   };
 };

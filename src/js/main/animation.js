@@ -10,7 +10,7 @@
  * }} args
  * @returns {(time: number) => void}
  */
-export function animation({ mesh, renderer, scene, camera }) {
+export function rotation({ mesh, renderer, scene, camera }) {
   return (time) => {
     mesh.rotation.x = time / 1000;
     mesh.rotation.y = time / 2000;
