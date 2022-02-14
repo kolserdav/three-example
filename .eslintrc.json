@@ -4,6 +4,7 @@
     "node": false,
     "browser": true
   },
+  "parser": "@babel/eslint-parser",
   "extends": ["eslint:recommended", "eslint-config-prettier", "prettier"],
   "plugins": ["prettier", "eslint-plugin-prettier", "eslint-plugin-html"],
   "parserOptions": {
