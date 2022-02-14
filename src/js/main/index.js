@@ -11,6 +11,8 @@ camera.position.y = 0.2;
 
 const scene = new THREE.Scene();
 
+const BLOCKS = 15;
+
 /**
  * Создает шахматный пол
  */
@@ -19,7 +21,6 @@ const createFloor = () => {
   const white = new THREE.MeshBasicMaterial({ color: 0xc5c5c5 });
   const black = new THREE.MeshBasicMaterial({ color: 0x00000 });
   const board = new THREE.Group();
-  const BLOCKS = 30;
   for (let x = 0; x < BLOCKS; x++) {
     for (let z = 0; z < BLOCKS; z++) {
       let cube;
@@ -37,11 +38,65 @@ const createFloor = () => {
 
 createFloor();
 
-const geometry = new THREE.BoxGeometry(0.1, 2, 3);
-const green = new THREE.MeshBasicMaterial({ color: 0xff5c5 });
-const box = new THREE.Mesh(geometry, green);
-box.position.set(0, 0.1, 1.5);
-scene.add(box);
+/**
+ * Создание стены
+ * @param {{
+ *  xWidth: number;
+ *  yWidth: number;
+ *  zWidth: number;
+ *  xPos: number;
+ *  yPos: number;
+ *  zPos: number
+ * }} param0
+ */
+const createWall = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos }) => {
+  const geometry = new THREE.BoxGeometry(xWidth, yWidth, zWidth);
+  const green = new THREE.MeshBasicMaterial({ color: '#8e79a3' });
+  const box = new THREE.Mesh(geometry, green);
+  box.position.set(xPos, yPos, zPos);
+  scene.add(box);
+};
+
+const wallHeight = (BLOCKS / 10) * 0.7;
+const wallWidht = 0.1;
+const wallLenght = BLOCKS / 10;
+const wallShift = BLOCKS / 10 / 2;
+
+createWall({
+  xWidth: wallWidht,
+  yWidth: wallHeight,
+  zWidth: wallLenght,
+  xPos: 0,
+  yPos: 0,
+  zPos: wallShift,
+});
+
+createWall({
+  xWidth: wallWidht,
+  yWidth: wallHeight,
+  zWidth: wallLenght,
+  xPos: wallLenght,
+  yPos: 0,
+  zPos: wallShift,
+});
+
+createWall({
+  xWidth: wallLenght,
+  yWidth: wallHeight,
+  zWidth: wallWidht,
+  xPos: wallShift,
+  yPos: 0,
+  zPos: wallLenght,
+});
+
+createWall({
+  xWidth: BLOCKS / 10,
+  yWidth: wallHeight,
+  zWidth: 0.1,
+  xPos: BLOCKS / 10 / 2,
+  yPos: 0,
+  zPos: 0,
+});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 const windowResize = () => {
@@ -139,6 +194,18 @@ function onDocumentKeyDown() {
   } else if (keyS() && keyA() && !keyD() && !keyW()) {
     controls.moveForward(-1 * Z_SPEED);
     controls.moveRight(-1 * X_SPEED);
+  }
+  if (camera.position.x < 0.1) {
+    camera.position.x = 0.1;
+  }
+  if (camera.position.x > BLOCKS / 10 - 0.1) {
+    camera.position.x = BLOCKS / 10 - 0.1;
+  }
+  if (camera.position.z < 0.1) {
+    camera.position.z = 0.1;
+  }
+  if (camera.position.z > BLOCKS / 10 - 0.1) {
+    camera.position.z = BLOCKS / 10 - 0.1;
   }
 }
 
