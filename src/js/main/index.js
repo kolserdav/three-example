@@ -6,19 +6,42 @@ import '../../scss/styles.scss';
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
 camera.position.z = 1;
+camera.position.x = 1;
 camera.position.y = 0.2;
 
 const scene = new THREE.Scene();
 
-const geometry = new THREE.BoxGeometry(20, 0.1, 20);
-const material = new THREE.MeshNormalMaterial();
+/**
+ * Создает шахматный пол
+ */
+const createFloor = () => {
+  const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+  const white = new THREE.MeshBasicMaterial({ color: 0xc5c5c5 });
+  const black = new THREE.MeshBasicMaterial({ color: 0x00000 });
+  const board = new THREE.Group();
+  const BLOCKS = 30;
+  for (let x = 0; x < BLOCKS; x++) {
+    for (let z = 0; z < BLOCKS; z++) {
+      let cube;
+      if (z % 2 !== 0) {
+        cube = new THREE.Mesh(geometry, x % 2 === 0 ? black : white);
+      } else {
+        cube = new THREE.Mesh(geometry, x % 2 === 0 ? white : black);
+      }
+      cube.position.set(x / 10, 0, z / 10);
+      board.add(cube);
+    }
+  }
+  scene.add(board);
+};
 
-const geometry2 = new THREE.BoxGeometry(0.2, 2, 0.2);
+createFloor();
 
-const mesh = new THREE.Mesh(geometry, material);
-const mesh2 = new THREE.Mesh(geometry2, material);
-scene.add(mesh);
-scene.add(mesh2);
+const geometry = new THREE.BoxGeometry(0.1, 2, 3);
+const green = new THREE.MeshBasicMaterial({ color: 0xff5c5 });
+const box = new THREE.Mesh(geometry, green);
+box.position.set(0, 0.1, 1.5);
+scene.add(box);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 const windowResize = () => {
@@ -65,20 +88,21 @@ setInterval(onDocumentKeyDown, 20);
  * @param {KeyboardEvent} e
  */
 function keyPress(e) {
-  map[e.key] = e.type === 'keydown';
+  map[e.key.toLowerCase()] = e.type === 'keydown';
+  console.log(camera.position);
 }
 
 const keyW = () => {
-  return map['w'] || map['W'] || map['ц'] || map['Ц'];
+  return map['w'] || map['ц'];
 };
 const keyA = () => {
-  return map['a'] || map['A'] || map['ф'] || map['Ф'];
+  return map['a'] || map['ф'];
 };
 const keyS = () => {
-  return map['s'] || map['S'] || map['ы'] || map['Ы'];
+  return map['s'] || map['ы'];
 };
 const keyD = () => {
-  return map['d'] || map['D'] || map['в'] || map['В'];
+  return map['d'] || map['в'];
 };
 
 /**
@@ -92,7 +116,7 @@ const map = {};
 function onDocumentKeyDown() {
   if (keyW() && !keyA() && !keyD() && !keyS()) {
     // Только вперед
-    controls.moveForward(Z_SPEED);
+    controls.moveForward(map['shift'] ? Z_SPEED * 2 : Z_SPEED);
     //camera.position.z -= Z_SPEED;
   } else if (keyA() && !keyW() && !keyS() && !keyD()) {
     // Только влево
@@ -118,6 +142,13 @@ function onDocumentKeyDown() {
   }
 }
 
+// Гравитация
+/*
+new MMDLoader().load('models/mmd/miku.pmd', function (mesh) {
+  physics = new MMDPhysics(mesh);
+  scene.add(mesh);
+});
+*/
 // статистика
 import Stats from 'three/examples/jsm/libs/stats.module';
 const stats = Stats();
