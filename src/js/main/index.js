@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import '../../scss/styles.scss';
-import { BLOCKS, WALL_HEIGHT_COEFF } from './constants';
+import { BLOCKS, WALL_HEIGHT_COEFF, MENTION_COEFFS } from './constants';
 import Animation from './animation';
 import ObjectFactory from './objectFactory';
 
@@ -10,7 +10,6 @@ const wallHeight = (BLOCKS / 10) * WALL_HEIGHT_COEFF;
 const wallLenght = BLOCKS / 10;
 const wallShift = BLOCKS / 10 / 2;
 const wallWidht = 0.1;
-
 /**
  * Класс управляющий канвасом и кнопкой захвата мыши
  */
@@ -23,6 +22,19 @@ class Main extends ObjectFactory {
     this.createColumns();
     this.createDome({ wallHeight, wallShift });
     this.renderHandler();
+
+    //this.loadFBX();
+
+    this.createBoxWithImage({
+      texture: 'mentions/1.png',
+      xWidth: wallLenght / 2,
+      yWidth: wallHeight / 3 / MENTION_COEFFS[1],
+      zWidth: wallWidht + 0.03,
+      xPos: wallShift,
+      yPos: wallHeight / 2 - wallHeight / MENTION_COEFFS[1],
+      zPos: 0,
+      index: 4,
+    });
   }
 
   /**

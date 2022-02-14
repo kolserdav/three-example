@@ -7,3 +7,7 @@ export const X_SPEED = 0.01;
 export const Z_SPEED = 0.02;
 // Скорость зума
 export const ZOOM_SPEED = 0.25;
+// Соотношение сторон отзывов
+export const MENTION_COEFFS = {
+  1: 3.7427745664739884,
+};

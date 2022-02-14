@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { BLOCKS } from './constants';
 
 /**
@@ -34,6 +35,7 @@ export default class ObjectFactory {
         board.add(cube);
       }
     }
+    board.position.set(0, 0, 0);
     this.scene.add(board);
   };
 
@@ -61,6 +63,46 @@ export default class ObjectFactory {
           map: texture,
         });
         const box = new THREE.Mesh(geometry, material);
+        box.position.set(xPos, yPos, zPos);
+        scene.add(box);
+      },
+      undefined,
+      (err) => {
+        console.error('Error create box with texture', err);
+      }
+    );
+  };
+
+  /**
+   * Создание стены
+   * @param {{
+   *  xWidth: number;
+   *  yWidth: number;
+   *  zWidth: number;
+   *  xPos: number;
+   *  yPos: number;
+   *  zPos: number;
+   *  texture: string;
+   *  index: number;
+   * }} param0
+   * @param {boolean} dark
+   */
+  createBoxWithImage = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos, texture, index }) => {
+    const geometry = new THREE.BoxGeometry(xWidth, yWidth, zWidth);
+    const loader = new THREE.TextureLoader();
+    const scene = this.scene;
+    const wood = loader.load('textures/gold.jpg');
+    loader.load(
+      texture,
+      (texture) => {
+        const cubeMaterialArray = [];
+        for (let i = 0; i < 6; i++) {
+          cubeMaterialArray.push(
+            new THREE.MeshBasicMaterial(i === index ? { map: texture } : { map: wood })
+          );
+        }
+        var cubeMaterials = new THREE.MeshFaceMaterial(cubeMaterialArray);
+        const box = new THREE.Mesh(geometry, cubeMaterials);
         box.position.set(xPos, yPos, zPos);
         scene.add(box);
       },
@@ -118,7 +160,7 @@ export default class ObjectFactory {
     const loader = new THREE.TextureLoader();
     const scene = this.scene;
     loader.load(
-      'textures/dome.jpg',
+      'backgrounds/dome.jpg',
       (texture) => {
         const material = new THREE.MeshBasicMaterial({
           map: texture,
