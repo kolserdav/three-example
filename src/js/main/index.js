@@ -6,6 +6,11 @@ import '../../scss/styles.scss';
 const BLOCKS = 15;
 // Коэффициент высоты стен
 const WALL_HEIGHT_COEFF = 0.8;
+// Скорости движения
+const X_SPEED = 0.01;
+const Z_SPEED = 0.02;
+// Скорость зума
+const ZOOM_SPEED = 0.5;
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
 camera.position.z = 1;
@@ -193,24 +198,22 @@ const createCylinder = ({ xPos, yPos, zPos }) => {
   );
 };
 
+// Колонны
 createCylinder({
   xPos: wallWidht * 2,
   yPos: 0,
   zPos: wallWidht * 2,
 });
-
 createCylinder({
   xPos: wallLenght - wallWidht * 2,
   yPos: 0,
   zPos: wallWidht * 2,
 });
-
 createCylinder({
   xPos: wallWidht * 2,
   yPos: 0,
   zPos: wallLenght - wallWidht * 2,
 });
-
 createCylinder({
   xPos: wallLenght - wallWidht * 2,
   yPos: 0,
@@ -274,18 +277,17 @@ if (start) {
     false
   );
   controls.addEventListener('lock', function () {
+    document.addEventListener('wheel', cameraZoom);
     start.setAttribute('style', 'display: none;');
   });
 
   controls.addEventListener('unlock', function () {
+    document.removeEventListener('wheel', cameraZoom);
     start.setAttribute('style', 'display: block;');
   });
 }
 
 // Движение
-const X_SPEED = 0.01;
-const Z_SPEED = 0.02;
-
 document.addEventListener('keydown', keyPress, true);
 document.addEventListener('keyup', keyPress, true);
 setInterval(onDocumentKeyDown, 20);
@@ -296,8 +298,25 @@ setInterval(onDocumentKeyDown, 20);
  */
 function keyPress(e) {
   map[e.key.toLowerCase()] = e.type === 'keydown';
-  console.log(camera.position);
 }
+
+/**
+ * Зуммирование
+ * @param {WheelEvent} e
+ */
+const cameraZoom = (e) => {
+  if (e.deltaY < 0) {
+    camera.zoom += ZOOM_SPEED;
+  } else {
+    camera.zoom -= ZOOM_SPEED;
+  }
+  if (camera.zoom < ZOOM_SPEED) {
+    camera.zoom = ZOOM_SPEED;
+  } else if (camera.zoom > 12) {
+    camera.zoom = 12;
+  }
+  camera.updateProjectionMatrix();
+};
 
 const keyW = () => {
   return map['w'] || map['ц'];
