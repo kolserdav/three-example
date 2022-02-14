@@ -11,7 +11,10 @@ camera.position.y = 0.2;
 
 const scene = new THREE.Scene();
 
+// Размер здания
 const BLOCKS = 15;
+// Коэффициент высоты стен
+const WALL_HEIGHT_COEFF = 0.8;
 
 /**
  * Создает шахматный пол
@@ -38,6 +41,12 @@ const createFloor = () => {
 
 createFloor();
 
+const wallHeight = (BLOCKS / 10) * WALL_HEIGHT_COEFF;
+const wallLenght = BLOCKS / 10;
+
+const wallShift = BLOCKS / 10 / 2;
+const wallWidht = 0.1;
+
 /**
  * Создание стены
  * @param {{
@@ -51,16 +60,27 @@ createFloor();
  */
 const createWall = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos }) => {
   const geometry = new THREE.BoxGeometry(xWidth, yWidth, zWidth);
-  const green = new THREE.MeshBasicMaterial({ color: '#8e79a3' });
-  const box = new THREE.Mesh(geometry, green);
-  box.position.set(xPos, yPos, zPos);
-  scene.add(box);
+  const loader = new THREE.TextureLoader();
+  loader.load(
+    // resource URL
+    'textures/wall-white.jpg',
+    // onLoad callback
+    function (texture) {
+      // in this example we create the material when the texture is loaded
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+      });
+      const box = new THREE.Mesh(geometry, material);
+      box.position.set(xPos, yPos, zPos);
+      scene.add(box);
+    },
+    // onProgress callback currently not supported
+    undefined,
+    function (err) {
+      console.error('An error happened.', err);
+    }
+  );
 };
-
-const wallHeight = (BLOCKS / 10) * 0.7;
-const wallWidht = 0.1;
-const wallLenght = BLOCKS / 10;
-const wallShift = BLOCKS / 10 / 2;
 
 createWall({
   xWidth: wallWidht,
@@ -90,12 +110,68 @@ createWall({
 });
 
 createWall({
-  xWidth: BLOCKS / 10,
+  xWidth: wallLenght,
   yWidth: wallHeight,
   zWidth: 0.1,
   xPos: BLOCKS / 10 / 2,
   yPos: 0,
   zPos: 0,
+});
+
+/**
+ * Создание колонны
+ * @param {{
+ *  xPos: number;
+ *  yPos: number;
+ *  zPos: number
+ * }} param0
+ */
+const createCylinder = ({ xPos, yPos, zPos }) => {
+  const geometry = new THREE.CylinderGeometry(wallWidht / 2, wallWidht / 2, wallHeight, 100);
+  const loader = new THREE.TextureLoader();
+  loader.load(
+    // resource URL
+    'textures/marble.jpg',
+    // onLoad callback
+    function (texture) {
+      // in this example we create the material when the texture is loaded
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+      });
+      const cylinder = new THREE.Mesh(geometry, material);
+      cylinder.position.set(xPos, yPos, zPos);
+      scene.add(cylinder);
+    },
+    // onProgress callback currently not supported
+    undefined,
+    function (err) {
+      console.error('An error happened.', err);
+    }
+  );
+};
+
+createCylinder({
+  xPos: wallWidht * 2,
+  yPos: 0,
+  zPos: wallWidht * 2,
+});
+
+createCylinder({
+  xPos: wallLenght - wallWidht * 2,
+  yPos: 0,
+  zPos: wallWidht * 2,
+});
+
+createCylinder({
+  xPos: wallWidht * 2,
+  yPos: 0,
+  zPos: wallLenght - wallWidht * 2,
+});
+
+createCylinder({
+  xPos: wallLenght - wallWidht * 2,
+  yPos: 0,
+  zPos: wallLenght - wallWidht * 2,
 });
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
