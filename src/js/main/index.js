@@ -2,7 +2,10 @@
 import * as THREE from 'three';
 import '../../scss/styles.scss';
 
-// init
+// Размер здания
+const BLOCKS = 15;
+// Коэффициент высоты стен
+const WALL_HEIGHT_COEFF = 0.8;
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
 camera.position.z = 1;
@@ -10,11 +13,6 @@ camera.position.x = 1;
 camera.position.y = 0.2;
 
 const scene = new THREE.Scene();
-
-// Размер здания
-const BLOCKS = 15;
-// Коэффициент высоты стен
-const WALL_HEIGHT_COEFF = 0.8;
 
 /**
  * Создает шахматный пол
@@ -57,13 +55,14 @@ const wallWidht = 0.1;
  *  yPos: number;
  *  zPos: number
  * }} param0
+ * @param {boolean} dark
  */
-const createWall = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos }) => {
+const createWall = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos }, dark = false) => {
   const geometry = new THREE.BoxGeometry(xWidth, yWidth, zWidth);
   const loader = new THREE.TextureLoader();
   loader.load(
     // resource URL
-    'textures/wall-white.jpg',
+    dark ? 'textures/wall-marble.jpg' : 'textures/wall-white.jpg',
     // onLoad callback
     function (texture) {
       // in this example we create the material when the texture is loaded
@@ -82,6 +81,7 @@ const createWall = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos }) => {
   );
 };
 
+// Стены
 createWall({
   xWidth: wallWidht,
   yWidth: wallHeight,
@@ -90,7 +90,6 @@ createWall({
   yPos: 0,
   zPos: wallShift,
 });
-
 createWall({
   xWidth: wallWidht,
   yWidth: wallHeight,
@@ -99,7 +98,6 @@ createWall({
   yPos: 0,
   zPos: wallShift,
 });
-
 createWall({
   xWidth: wallLenght,
   yWidth: wallHeight,
@@ -108,15 +106,60 @@ createWall({
   yPos: 0,
   zPos: wallLenght,
 });
-
 createWall({
   xWidth: wallLenght,
   yWidth: wallHeight,
   zWidth: 0.1,
-  xPos: BLOCKS / 10 / 2,
+  xPos: wallShift,
   yPos: 0,
   zPos: 0,
 });
+
+// Балки
+createWall(
+  {
+    xWidth: wallLenght,
+    yWidth: wallWidht,
+    zWidth: wallWidht * 6,
+    xPos: wallShift,
+    yPos: wallHeight / 2,
+    zPos: 0,
+  },
+  true
+);
+createWall(
+  {
+    xWidth: wallLenght,
+    yWidth: wallWidht,
+    zWidth: wallWidht * 6,
+    xPos: wallShift,
+    yPos: wallHeight / 2,
+    zPos: wallShift * 2,
+  },
+  true
+);
+createWall(
+  {
+    xWidth: wallWidht * 6,
+    yWidth: wallWidht,
+    zWidth: wallLenght,
+    xPos: wallShift * 2,
+    yPos: wallHeight / 2,
+    zPos: wallShift,
+  },
+  true
+);
+createWall(
+  {
+    xWidth: wallWidht * 6,
+    yWidth: wallWidht,
+    zWidth: wallLenght,
+    xPos: 0,
+    yPos: wallHeight / 2,
+    zPos: wallShift,
+  },
+  true
+);
 
 /**
  * Создание колонны
@@ -131,7 +174,7 @@ const createCylinder = ({ xPos, yPos, zPos }) => {
   const loader = new THREE.TextureLoader();
   loader.load(
     // resource URL
-    'textures/marble.jpg',
+    'textures/marble-black.jpg',
     // onLoad callback
     function (texture) {
       // in this example we create the material when the texture is loaded
@@ -174,6 +217,39 @@ createCylinder({
   zPos: wallLenght - wallWidht * 2,
 });
 
+/**
+ * Создание купола
+ */
+const createDome = () => {
+  const points = [];
+  for (let i = 7; i > 0; i--) {
+    points.push(new THREE.Vector2((Math.sin(i * 0.5) * 10 + 5) / 10, i - 3));
+  }
+  const geometry = new THREE.LatheGeometry(points, 33);
+  const loader = new THREE.TextureLoader();
+  loader.load(
+    // resource URL
+    'textures/dome.jpg',
+    // onLoad callback
+    function (texture) {
+      // in this example we create the material when the texture is loaded
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+      });
+      const lathe = new THREE.Mesh(geometry, material);
+      lathe.position.set(wallShift, wallHeight, wallShift);
+      scene.add(lathe);
+    },
+    // onProgress callback currently not supported
+    undefined,
+    function (err) {
+      console.error('An error happened.', err);
+    }
+  );
+};
+
+createDome();
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 const windowResize = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -207,8 +283,8 @@ if (start) {
 }
 
 // Движение
-const X_SPEED = 0.005;
-const Z_SPEED = 0.005;
+const X_SPEED = 0.01;
+const Z_SPEED = 0.02;
 
 document.addEventListener('keydown', keyPress, true);
 document.addEventListener('keyup', keyPress, true);
@@ -285,13 +361,6 @@ function onDocumentKeyDown() {
   }
 }
 
-// Гравитация
-/*
-new MMDLoader().load('models/mmd/miku.pmd', function (mesh) {
-  physics = new MMDPhysics(mesh);
-  scene.add(mesh);
-});
-*/
 // статистика
 import Stats from 'three/examples/jsm/libs/stats.module';
 const stats = Stats();
