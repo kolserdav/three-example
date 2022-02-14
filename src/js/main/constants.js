@@ -6,4 +6,4 @@ export const WALL_HEIGHT_COEFF = 0.8;
 export const X_SPEED = 0.01;
 export const Z_SPEED = 0.02;
 // Скорость зума
-export const ZOOM_SPEED = 0.5;
+export const ZOOM_SPEED = 0.25;

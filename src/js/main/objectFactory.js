@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { BLOCKS } from './constants';
 
+/**
+ * Класс содержащий методы создающие 3Д-объекты
+ */
 export default class ObjectFactory {
   /**
    * @type {THREE.Scene}
@@ -63,7 +66,7 @@ export default class ObjectFactory {
       },
       undefined,
       (err) => {
-        console.error('Error create wall', err);
+        console.error('Error create box with texture', err);
       }
     );
   };
@@ -109,9 +112,9 @@ export default class ObjectFactory {
   createDome = ({ wallShift, wallHeight }) => {
     const points = [];
     for (let i = 7; i > 0; i--) {
-      points.push(new THREE.Vector2((Math.sin(i * 0.5) * 10 + 5) / 10, i - 3));
+      points.push(new THREE.Vector2((Math.sin(i * 0.5233) * 10 + 5) / 10, i - 3));
     }
-    const geometry = new THREE.LatheGeometry(points, 33);
+    const geometry = new THREE.LatheGeometry(points, 1000);
     const loader = new THREE.TextureLoader();
     const scene = this.scene;
     loader.load(
@@ -121,7 +124,7 @@ export default class ObjectFactory {
           map: texture,
         });
         const lathe = new THREE.Mesh(geometry, material);
-        lathe.position.set(wallShift, wallHeight, wallShift);
+        lathe.position.set(wallShift, wallHeight * 2.3, wallShift);
         scene.add(lathe);
       },
       undefined,

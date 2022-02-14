@@ -5,6 +5,9 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
 import { BLOCKS, Z_SPEED, X_SPEED, ZOOM_SPEED } from './constants';
 
+/**
+ * Класс управляющий камерой персонажа
+ */
 export default class Animation {
   /**
    * Камера гостя
@@ -63,6 +66,9 @@ export default class Animation {
         this.camera.zoom = ZOOM_SPEED;
       } else if (this.camera.zoom > 12) {
         this.camera.zoom = 12;
+      }
+      if (this.camera.zoom < 1) {
+        this.camera.zoom = 1;
       }
       this.camera.updateProjectionMatrix();
     };
