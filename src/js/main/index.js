@@ -23,19 +23,24 @@ class Main extends ObjectFactory {
     this.createDome({ wallHeight, wallShift });
     this.renderHandler();
 
-    //this.loadFBX();
+    this.createMentions();
+  }
+
+  createMentions = () => {
+    const xWidth = wallLenght / 2.5;
+    const yWidth = xWidth / MENTION_COEFFS[1];
 
     this.createBoxWithImage({
       texture: 'mentions/1.png',
-      xWidth: wallLenght / 2,
-      yWidth: wallHeight / 3 / MENTION_COEFFS[1],
+      xWidth,
+      yWidth,
       zWidth: wallWidht + 0.03,
       xPos: wallShift,
-      yPos: wallHeight / 2 - wallHeight / MENTION_COEFFS[1],
+      yPos: yWidth + wallWidht,
       zPos: 0,
       index: 4,
     });
-  }
+  };
 
   /**
    * Обработчик рендеринга

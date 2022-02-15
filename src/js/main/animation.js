@@ -4,6 +4,7 @@
 import { PerspectiveCamera } from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
 import { BLOCKS, Z_SPEED, X_SPEED, ZOOM_SPEED } from './constants';
+import { isMobile } from './lib';
 
 /**
  * Класс управляющий камерой персонажа
@@ -74,11 +75,13 @@ export default class Animation {
     };
     const start = document.querySelector('#start');
     const controls = this.controls;
-    if (start) {
+    if (start && !isMobile) {
       start.addEventListener(
         'click',
         function () {
-          controls.lock();
+          if (!isMobile) {
+            controls.lock();
+          }
         },
         false
       );
@@ -90,6 +93,34 @@ export default class Animation {
         document.removeEventListener('wheel', cameraZoom);
         start.setAttribute('style', 'display: block;');
       });
+    } else if (start) {
+      start.setAttribute('style', 'display: none;');
+      /**
+       * @type {number}
+       */
+      let startX;
+      /**
+       * @type {number}
+       */
+      let startY;
+      document.ontouchstart = (e) => {
+        const { clientX, clientY } = e.touches[0];
+        startX = clientX;
+        startY = clientY;
+        const { x, y } = this.camera.rotation;
+        console.log('start', startX, startY, x, y);
+      };
+      document.ontouchmove = (e) => {
+        const { clientX, clientY } = e.touches[0];
+        const { x, y } = this.camera.rotation;
+        console.log('x', x, x - (startX - clientX) / 10000);
+        console.log('y', y, y - (startY - clientY) / 10000);
+        this.camera.rotateY(x - (startX - clientX) / 10000);
+        this.camera.rotateX(y - (startY - clientY) / 10000);
+      };
+      document.ontouchend = (e) => {
+        console.log('end', e);
+      };
     }
   };
 

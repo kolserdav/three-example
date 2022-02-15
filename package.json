@@ -1,5 +1,5 @@
 {
-  "name": "three.js",
+  "name": "threejs-example",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -11,8 +11,9 @@
     "three": "^0.137.5"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.17.0",
+    "agent-base": "^6.0.2",
     "@babel/core": "^7.17.2",
+    "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@types/three": "^0.137.0",
     "babel-loader": "^8.2.3",
