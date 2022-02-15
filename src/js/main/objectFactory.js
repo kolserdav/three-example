@@ -1,5 +1,15 @@
-import * as THREE from 'three';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import {
+  BoxGeometry,
+  MeshBasicMaterial,
+  Group,
+  Scene,
+  Mesh,
+  TextureLoader,
+  MeshFaceMaterial,
+  LatheGeometry,
+  CylinderGeometry,
+  Vector2,
+} from 'three';
 import { BLOCKS } from './constants';
 
 /**
@@ -7,29 +17,29 @@ import { BLOCKS } from './constants';
  */
 export default class ObjectFactory {
   /**
-   * @type {THREE.Scene}
+   * @type {Scene}
    */
   scene;
 
   constructor() {
-    this.scene = new THREE.Scene();
+    this.scene = new Scene();
   }
 
   /**
    * Создание шахматного пола
    */
   createFloor = () => {
-    const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    const white = new THREE.MeshBasicMaterial({ color: 0xc5c5c5 });
-    const black = new THREE.MeshBasicMaterial({ color: 0x00000 });
-    const board = new THREE.Group();
+    const geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const white = new MeshBasicMaterial({ color: 0xc5c5c5 });
+    const black = new MeshBasicMaterial({ color: 0x00000 });
+    const board = new Group();
     for (let x = 0; x < BLOCKS; x++) {
       for (let z = 0; z < BLOCKS; z++) {
         let cube;
         if (z % 2 !== 0) {
-          cube = new THREE.Mesh(geometry, x % 2 === 0 ? black : white);
+          cube = new Mesh(geometry, x % 2 === 0 ? black : white);
         } else {
-          cube = new THREE.Mesh(geometry, x % 2 === 0 ? white : black);
+          cube = new Mesh(geometry, x % 2 === 0 ? white : black);
         }
         cube.position.set(x / 10, 0, z / 10);
         board.add(cube);
@@ -53,16 +63,16 @@ export default class ObjectFactory {
    * @param {boolean} dark
    */
   createBoxWithTexture = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos, texture }) => {
-    const geometry = new THREE.BoxGeometry(xWidth, yWidth, zWidth);
-    const loader = new THREE.TextureLoader();
+    const geometry = new BoxGeometry(xWidth, yWidth, zWidth);
+    const loader = new TextureLoader();
     const scene = this.scene;
     loader.load(
       texture,
       (texture) => {
-        const material = new THREE.MeshBasicMaterial({
+        const material = new MeshBasicMaterial({
           map: texture,
         });
-        const box = new THREE.Mesh(geometry, material);
+        const box = new Mesh(geometry, material);
         box.position.set(xPos, yPos, zPos);
         scene.add(box);
       },
@@ -88,8 +98,8 @@ export default class ObjectFactory {
    * @param {boolean} dark
    */
   createBoxWithImage = ({ xWidth, yWidth, zWidth, xPos, yPos, zPos, texture, index }) => {
-    const geometry = new THREE.BoxGeometry(xWidth, yWidth, zWidth);
-    const loader = new THREE.TextureLoader();
+    const geometry = new BoxGeometry(xWidth, yWidth, zWidth);
+    const loader = new TextureLoader();
     const scene = this.scene;
     const wood = loader.load('textures/gold.jpg');
     loader.load(
@@ -98,11 +108,11 @@ export default class ObjectFactory {
         const cubeMaterialArray = [];
         for (let i = 0; i < 6; i++) {
           cubeMaterialArray.push(
-            new THREE.MeshBasicMaterial(i === index ? { map: texture } : { map: wood })
+            new MeshBasicMaterial(i === index ? { map: texture } : { map: wood })
           );
         }
-        var cubeMaterials = new THREE.MeshFaceMaterial(cubeMaterialArray);
-        const box = new THREE.Mesh(geometry, cubeMaterials);
+        const cubeMaterials = new MeshFaceMaterial(cubeMaterialArray);
+        const box = new Mesh(geometry, cubeMaterials);
         box.position.set(xPos, yPos, zPos);
         scene.add(box);
       },
@@ -124,16 +134,16 @@ export default class ObjectFactory {
    * }} param0
    */
   createCylinder = ({ wallWidht, wallHeight, xPos, yPos, zPos }) => {
-    const geometry = new THREE.CylinderGeometry(wallWidht / 2, wallWidht / 2, wallHeight, 100);
-    const loader = new THREE.TextureLoader();
+    const geometry = new CylinderGeometry(wallWidht / 2, wallWidht / 2, wallHeight, 100);
+    const loader = new TextureLoader();
     const scene = this.scene;
     loader.load(
       'textures/marble-black.jpg',
       (texture) => {
-        const material = new THREE.MeshBasicMaterial({
+        const material = new MeshBasicMaterial({
           map: texture,
         });
-        const cylinder = new THREE.Mesh(geometry, material);
+        const cylinder = new Mesh(geometry, material);
         cylinder.position.set(xPos, yPos, zPos);
         scene.add(cylinder);
       },
@@ -154,18 +164,18 @@ export default class ObjectFactory {
   createDome = ({ wallShift, wallHeight }) => {
     const points = [];
     for (let i = 7; i > 0; i--) {
-      points.push(new THREE.Vector2((Math.sin(i * 0.5233) * 10 + 5) / 10, i - 3));
+      points.push(new Vector2((Math.sin(i * 0.5233) * 10 + 5) / 10, i - 3));
     }
-    const geometry = new THREE.LatheGeometry(points, 1000);
-    const loader = new THREE.TextureLoader();
+    const geometry = new LatheGeometry(points, 1000);
+    const loader = new TextureLoader();
     const scene = this.scene;
     loader.load(
       'backgrounds/dome.jpg',
       (texture) => {
-        const material = new THREE.MeshBasicMaterial({
+        const material = new MeshBasicMaterial({
           map: texture,
         });
-        const lathe = new THREE.Mesh(geometry, material);
+        const lathe = new Mesh(geometry, material);
         lathe.position.set(wallShift, wallHeight * 2.3, wallShift);
         scene.add(lathe);
       },

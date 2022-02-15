@@ -1,5 +1,5 @@
 // @ts-check
-import * as THREE from 'three';
+import { WebGLRenderer } from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import '../../scss/styles.scss';
 import { BLOCKS, WALL_HEIGHT_COEFF, MENTION_COEFFS } from './constants';
@@ -41,7 +41,7 @@ class Main extends ObjectFactory {
    * Обработчик рендеринга
    */
   renderHandler = () => {
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new WebGLRenderer({ antialias: true });
     const stats = Stats();
     const animation = new Animation();
     const scene = this.scene;

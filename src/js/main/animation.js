@@ -1,7 +1,7 @@
 // @ts-check
 
 // Перемещение мыши
-import * as THREE from 'three';
+import { PerspectiveCamera } from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
 import { BLOCKS, Z_SPEED, X_SPEED, ZOOM_SPEED } from './constants';
 
@@ -11,7 +11,7 @@ import { BLOCKS, Z_SPEED, X_SPEED, ZOOM_SPEED } from './constants';
 export default class Animation {
   /**
    * Камера гостя
-   * @type {THREE.PerspectiveCamera}
+   * @type {PerspectiveCamera}
    */
   camera;
 
@@ -28,7 +28,7 @@ export default class Animation {
   map;
 
   constructor() {
-    this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+    this.camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
     this.camera.position.z = 1;
     this.camera.position.x = 1;
     this.camera.position.y = 0.2;
