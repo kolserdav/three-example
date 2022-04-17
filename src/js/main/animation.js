@@ -30,6 +30,7 @@ export default class Animation {
 
   constructor() {
     this.camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+    this.camera.rotation.order = 'YX';
     this.camera.position.z = 1;
     this.camera.position.x = 1;
     this.camera.position.y = 0.2;
@@ -75,11 +76,11 @@ export default class Animation {
     };
     const start = document.querySelector('#start');
     const controls = this.controls;
-    if (start && !isMobile) {
+    if (start && !isMobile()) {
       start.addEventListener(
         'click',
         function () {
-          if (!isMobile) {
+          if (!isMobile()) {
             controls.lock();
           }
         },
@@ -94,7 +95,9 @@ export default class Animation {
         start.setAttribute('style', 'display: block;');
       });
     } else if (start) {
-      start.setAttribute('style', 'display: none;');
+      if (isMobile()) {
+        start.setAttribute('style', 'display: none;');
+      }
       /**
        * @type {number}
        */
@@ -103,23 +106,40 @@ export default class Animation {
        * @type {number}
        */
       let startY;
+
+      /**
+       * @type {NodeJS.Timer}
+       */
+      let interval;
+
+      /**
+       * @type {TouchEvent['touches'][any]}
+       */
+      let touches;
+
       document.ontouchstart = (e) => {
-        const { clientX, clientY } = e.touches[0];
+        touches = e.touches[0];
+        const { clientX, clientY } = touches;
         startX = clientX;
         startY = clientY;
         const { x, y } = this.camera.rotation;
         console.log('start', startX, startY, x, y);
+        const MOVE_COEFF = 5000;
+        interval = setInterval(() => {
+          const { clientX, clientY } = touches;
+          const { x, y } = this.camera.rotation;
+          const moveX = x - (startX - clientX) / MOVE_COEFF;
+          const moveY = y - (startY - clientY) / MOVE_COEFF;
+          this.camera.rotateY(moveX);
+          this.camera.rotateX(moveY);
+        }, 16.666666666666668);
       };
       document.ontouchmove = (e) => {
-        const { clientX, clientY } = e.touches[0];
-        const { x, y } = this.camera.rotation;
-        console.log('x', x, x - (startX - clientX) / 10000);
-        console.log('y', y, y - (startY - clientY) / 10000);
-        this.camera.rotateY(x - (startX - clientX) / 10000);
-        this.camera.rotateX(y - (startY - clientY) / 10000);
+        touches = e.touches[0];
       };
       document.ontouchend = (e) => {
         console.log('end', e);
+        clearInterval(interval);
       };
     }
   };
